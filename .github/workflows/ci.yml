@@ -37,7 +37,6 @@ jobs:
           make
       - name: Testing
         run: |
-          cd ..
           mkdir data
           cd data
           wget https://datasets.imdbws.com/title.basics.tsv.gz
