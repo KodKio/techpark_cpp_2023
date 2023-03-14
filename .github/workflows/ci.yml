@@ -35,7 +35,7 @@ jobs:
           cd build
           cmake ..
           make
-      - name: Testing
+      - name: Download data
         run: |
           mkdir data
           cd data
@@ -45,7 +45,8 @@ jobs:
           gunzip title.ratings.tsv.gz
           gunzip title.akas.tsv.gz
           gunzip title.basics.tsv.gz
-          cd ..
+      - name: Testing
+        run: |
           valgrind --tool=memcheck --leak-check=full ./build/tests/test_films_top
       - name: Genarate coverage
         run: |
