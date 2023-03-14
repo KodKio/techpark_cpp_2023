@@ -19,7 +19,7 @@ jobs:
           sudo apt update
           sudo apt install valgrind
           sudo apt install wget
-          sudo apt install gunzip
+          sudo apt install gzip
           pip install gcovr
           git clone https://github.com/google/googletest.git -b release-1.11.0
           cd googletest
@@ -47,7 +47,6 @@ jobs:
           gunzip title.akas.tsv.gz
           gunzip title.basics.tsv.gz
           cd ..
-          cd build
           valgrind --tool=memcheck --leak-check=full ./build/tests/test_films_top
       - name: Genarate coverage
         run: |
