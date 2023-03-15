@@ -47,7 +47,8 @@ jobs:
           gunzip title.basics.tsv.gz
       - name: Testing
         run: |
-          valgrind --tool=memcheck --leak-check=full ./build/tests/test_films_top
+          cd build/tests
+          valgrind --tool=memcheck --leak-check=full ./test_films_top
       - name: Genarate coverage
         run: |
           cd build
