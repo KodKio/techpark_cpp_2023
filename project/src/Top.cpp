@@ -11,15 +11,16 @@ Top::Top(const std::string& year, const std::string& akas_filename, const std::s
          : year(year), akas_filename(akas_filename), basics_filename(basics_filename),
            ratings_filename(ratings_filename) {}
 
-int Top::getTop() {
+int Top::createTop() {
     if (getFilms()) {
         return 1;
     }
     std::ranges::sort(films, std::ranges::greater(), &Film::rate);
-    for (auto i : films) {
-        std::cout << i << "\n";
-    }
     return 0;
+}
+
+std::vector<Film> Top::getTop() {
+    return films;
 }
 
 int Top::getFilmsInfo() {

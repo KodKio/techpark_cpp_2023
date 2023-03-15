@@ -11,7 +11,8 @@ class Top {
     Top(const std::string& year, const std::string& akas_filename, const std::string& basics_filename,
         const std::string& ratings_filename);
 
-    int getTop();
+    int createTop();
+    std::vector<Film> getTop();
  private:
     std::string year;
     std::string akas_filename;

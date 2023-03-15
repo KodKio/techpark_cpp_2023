@@ -40,9 +40,13 @@ int main(int argc, char* argv[]) {
     }
 
     Top top(year, akas_filename, basics_filename, ratings_filename);
-    if (top.getTop()) {
+    if (top.createTop()) {
         std::cerr << "Wrong file format" << std::endl;
         return 1;
+    }
+    auto res = top.getTop();
+    for (const auto& i: res) {
+        std::cout << i << "\n";
     }
 
     return 0;

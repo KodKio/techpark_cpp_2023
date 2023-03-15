@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <vector>
 
 #include "Film.h"
 #include "Top.h"
@@ -19,30 +20,36 @@ TEST(FilmSuite, TestFilmOutput) {
 }
 
 TEST(TopSuite, TestTop) {
-    testing::internal::CaptureStdout();
     Top top("2005", "../../data/title.akas.tsv",
             "../../data/title.basics.tsv", "../../data/title.ratings.tsv");
-    int res = top.getTop();
-    std::string output = testing::internal::GetCapturedStdout();
-    std::string expected = "Звёздные войны. Эпизод 3: Месть Ситхов 7.6\n"
-                           "Труп невесты 7.3\n"
-                           "Фантастическая четвёрка 5.7\n";
-    EXPECT_EQ(output, expected);
+    int res = top.createTop();
+    auto films = top.getTop();
     EXPECT_EQ(res, 0);
+
+    std::vector<Film> expected = {
+            {"t1", 7.6, "Звёздные войны. Эпизод 3: Месть Ситхов"},
+            {"t2", 7.3, "Труп невесты"},
+            {"t3", 5.7, "Фантастическая четвёрка"},
+    };
+    EXPECT_EQ(expected.size(), films.size());
+    for (int i = 0; i < films.size(); i++) {
+        EXPECT_EQ(films[i].name, expected[i].name);
+        EXPECT_EQ(films[i].rate, expected[i].rate);
+    }
 }
 
 TEST(TopSuite, TestFailFileOpen) {
     Top top1("2005", "", "../../data/title.basics.tsv",
             "../../data/title.ratings.tsv");
-    int res = top1.getTop();
+    int res = top1.createTop();
     EXPECT_EQ(res, 1);
     Top top2("2005", "../../data/title.akas.tsv", "",
              "../../data/title.ratings.tsv");
-    res = top2.getTop();
+    res = top2.createTop();
     EXPECT_EQ(res, 1);
     Top top3("2005", "../../data/title.akas.tsv", "../../data/title.basics.tsv",
              "");
-    res = top3.getTop();
+    res = top3.createTop();
     EXPECT_EQ(res, 1);
 }
 
