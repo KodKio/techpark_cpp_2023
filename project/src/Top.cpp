@@ -17,7 +17,7 @@ int Top::getTop() {
     }
     std::ranges::sort(films, std::ranges::greater(), &Film::rate);
     for (auto i : films) {
-        std::cout << i << std::endl;
+        std::cout << i << "\n";
     }
     return 0;
 }
