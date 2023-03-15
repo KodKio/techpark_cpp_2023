@@ -14,7 +14,7 @@ Top::Top(const std::string& year, const std::string& akas_filename, const std::s
 int Top::getTop() {
     if (getFilms()) {
         return 1;
-    };
+    }
     std::ranges::sort(films, std::ranges::greater(), &Film::rate);
     for (auto i : films) {
         std::cout << i << std::endl;
