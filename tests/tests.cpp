@@ -22,9 +22,27 @@ TEST(TopSuite, TestTop) {
     testing::internal::CaptureStdout();
     Top top("2005", "../../data/title.akas.tsv",
             "../../data/title.basics.tsv", "../../data/title.ratings.tsv");
-    top.getTop();
+    int res = top.getTop();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(output, "Звёздные войны. Эпизод 3: Месть Ситхов 7.6\n Труп невесты 7.3\n Фантастическая четвёрка 5.7");
+    EXPECT_EQ(output, "Звёздные войны. Эпизод 3: Месть Ситхов 7.6\n"
+                      "Труп невесты 7.3\n"
+                      "Фантастическая четвёрка 5.7\n");
+    EXPECT_EQ(res, 0);
+}
+
+TEST(TopSuite, TestFailFileOpen) {
+    Top top1("2005", "", "../../data/title.basics.tsv",
+            "../../data/title.ratings.tsv");
+    int res = top1.getTop();
+    EXPECT_EQ(res, 1);
+    Top top2("2005", "../../data/title.akas.tsv", "",
+             "../../data/title.ratings.tsv");
+    res = top2.getTop();
+    EXPECT_EQ(res, 1);
+    Top top3("2005", "../../data/title.akas.tsv", "../../data/title.basics.tsv",
+             "");
+    res = top3.getTop();
+    EXPECT_EQ(res, 1);
 }
 
 int main(int argc, char** argv) {
