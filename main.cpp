@@ -4,8 +4,9 @@
 
 void printUsage() {
     std::cerr << "Something went wrong!" << std::endl;
-    std::cout << "Usage: ./films_top --year (YYYY) --title-akas-path path/to/title.akas.tsv --title-basics-path "
-                 "path/to/title.basics.tsv --title-ratings-path path/to/title.ratings.tsv" << std::endl;
+    std::cout << "Usage: ./films_top --year (YYYY) --title-akas-path path/to/title.akas.tsv "
+                 "--title-basics-path path/to/title.basics.tsv "
+                 "--title-ratings-path path/to/title.ratings.tsv" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
