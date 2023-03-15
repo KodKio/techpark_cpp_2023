@@ -24,9 +24,10 @@ TEST(TopSuite, TestTop) {
             "../../data/title.basics.tsv", "../../data/title.ratings.tsv");
     int res = top.getTop();
     std::string output = testing::internal::GetCapturedStdout();
-    EXPECT_EQ(output, "Звёздные войны. Эпизод 3: Месть Ситхов 7.6\n"
-		      "Труп невесты 7.3\n"
-		      "Фантастическая четвёрка 5.7\n");
+    std::string expected = "Звёздные войны. Эпизод 3: Месть Ситхов 7.6\n"
+                           "Труп невесты 7.3\n"
+                           "Фантастическая четвёрка 5.7\n";
+    EXPECT_EQ(output, expected);
     EXPECT_EQ(res, 0);
 }
 
