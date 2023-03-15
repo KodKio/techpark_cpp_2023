@@ -58,7 +58,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          token: 78688142-4057-47ea-8c80-46a22c531a0a
+          token: 67cffbaa-71a5-412b-9245-664ca41a1150
           files: ./build/coverage-report/coverage.xml
   linters:
     runs-on: ubuntu-latest
