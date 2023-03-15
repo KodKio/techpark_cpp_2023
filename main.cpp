@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     auto res = top.getTop();
-    for (const auto& i: res) {
+    for (const auto& i : res) {
         std::cout << i << "\n";
     }
 
