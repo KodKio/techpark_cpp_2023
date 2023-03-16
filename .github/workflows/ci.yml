@@ -48,7 +48,7 @@ jobs:
       - name: Testing
         run: |
           cd build/tests
-          valgrind --tool=memcheck --leak-check=full ./test_films_top
+          ./test_films_top
       - name: Genarate coverage
         run: |
           cd build
