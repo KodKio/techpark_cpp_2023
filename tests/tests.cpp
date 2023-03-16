@@ -54,7 +54,7 @@ TEST(TopSuite, TestFailFileOpen) {
 }
 
 int main(int argc, char** argv) {
-  setlocale(LC_CTYPE, "rus");
+  setlocale(0, ".UTF8");
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
