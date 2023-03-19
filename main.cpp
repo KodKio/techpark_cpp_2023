@@ -28,21 +28,21 @@ int run(int argc, char* argv[]) {
             {"title-akas-path", 1, nullptr, 'a'},
             {"title-ratings-path", 1, nullptr, 'r'},
             {"year", 1, nullptr, 'y'},
-            {nullptr,0,nullptr,0}
+            {nullptr, 0, nullptr, 0}
     };
 
     int ch;
 
     while ((ch = getopt_long(argc, argv, "b:a:r:y:", long_options, nullptr)) != -1) {
-        if (ch == 'b')
+        if (ch == 'b') {
             basics_filename = optarg;
-        else if (ch == 'a')
+        } else if (ch == 'a') {
             akas_filename = optarg;
-        else if (ch == 'r')
+        } else if (ch == 'r') {
             ratings_filename = optarg;
-        else if (ch == 'y')
+        } else if (ch == 'y') {
             year = optarg;
-        else {
+        } else {
             printUsage();
             return 1;
         }

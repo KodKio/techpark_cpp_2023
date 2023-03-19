@@ -16,8 +16,8 @@ class Parser {
 
     int parse();
     std::vector<Film> getResult();
- private:
 
+ private:
     struct Info {
         std::string id;
         std::string type;

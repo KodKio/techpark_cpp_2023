@@ -1,7 +1,7 @@
 #include "Top.h"
 #include <algorithm>
 
-Top::Top(std::vector<Film> &_films) : films(_films) {
+Top::Top(const std::vector<Film> &_films) : films(_films) {
     std::ranges::sort(films, std::ranges::greater(), &Film::rate);
 }
 

@@ -6,8 +6,8 @@
 
 class Top {
  public:
-    Top(std::vector<Film>& _films);
-    Top(std::vector<Film>&& _films);
+    explicit Top(const std::vector<Film>& _films);
+    explicit Top(std::vector<Film>&& _films);
     std::vector<Film> getTop();
  private:
     std::vector<Film> films;
