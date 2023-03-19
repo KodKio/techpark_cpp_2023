@@ -4,8 +4,7 @@
 #include <string>
 #include <iostream>
 
-class Film {
- public:
+struct Film {
     std::string id;
     float rate;
     std::string name;

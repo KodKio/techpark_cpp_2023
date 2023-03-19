@@ -35,20 +35,9 @@ jobs:
           cd build
           cmake ..
           make
-      - name: Download data
-        run: |
-          mkdir data
-          cd data
-          wget https://datasets.imdbws.com/title.basics.tsv.gz
-          wget https://datasets.imdbws.com/title.akas.tsv.gz
-          wget https://datasets.imdbws.com/title.ratings.tsv.gz
-          gunzip title.ratings.tsv.gz
-          gunzip title.akas.tsv.gz
-          gunzip title.basics.tsv.gz
       - name: Testing
         run: |
-          cd build/tests
-          ./test_films_top
+          valgrind --tool=memcheck --leak-check=full ./build/tests/test_films_top
       - name: Genarate coverage
         run: |
           cd build

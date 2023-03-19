@@ -3,7 +3,7 @@ project(films_top_lib)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fprofile-arcs -ftest-coverage -fPIC -O0")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fprofile-arcs -ftest-coverage -fPIC -O0 -Wall -Werror -Wpedantic")
 
 file(GLOB SOURCES ./src/*.cpp)
 file(GLOB INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
