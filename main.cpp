@@ -12,7 +12,32 @@ void printUsage() {
                  "--title-ratings-path path/to/title.ratings.tsv" << std::endl;
 }
 
-int run(int argc, char* argv[]) {
+int run(const std::string& basics_filename, const std::string& ratings_filename,
+        const std::string& akas_filename, const std::string& year) {
+
+    std::ifstream basics(basics_filename);
+    std::ifstream ratings(ratings_filename);
+    std::ifstream akas(akas_filename);
+    if (!akas.is_open() || !basics.is_open() ||!ratings.is_open()) {
+        std::cerr << "Wrong file paths" << std::endl;
+        return 1;
+    }
+
+    Parser parser;
+    if (parser.parse(basics, ratings, akas, year)) {
+        std::cerr << "Wrong file format" << std::endl;
+        return 1;
+    }
+
+    auto res = Top(parser.getResult()).getTop();
+    for (const auto& i : res) {
+        std::cout << i << "\n";
+    }
+
+    return 0;
+}
+
+int main(int argc, char* argv[]) {
     if (argc != 9) {
         printUsage();
         return 1;
@@ -48,28 +73,5 @@ int run(int argc, char* argv[]) {
         }
     }
 
-    std::ifstream akas(akas_filename);
-    std::ifstream basics(basics_filename);
-    std::ifstream ratings(ratings_filename);
-    if (!akas.is_open() || !basics.is_open() ||!ratings.is_open()) {
-        std::cerr << "Wrong file paths" << std::endl;
-        return 1;
-    }
-
-    Parser parser(year, akas, basics, ratings);
-    if (parser.parse()) {
-        std::cerr << "Wrong file format" << std::endl;
-        return 1;
-    }
-
-    auto res = Top(parser.getResult()).getTop();
-    for (const auto& i : res) {
-        std::cout << i << "\n";
-    }
-
-    return 0;
-}
-
-int main(int argc, char* argv[]) {
-    return run(argc, argv);
+    return run(basics_filename, ratings_filename, akas_filename, year);
 }

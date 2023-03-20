@@ -6,30 +6,52 @@
 #include "Top.h"
 #include "Parser.h"
 
-void genStrings(std::string& basicsStr, std::string& akasStr, std::string& ratingsStr, std::string& fail) {
+class ParserSuite : public ::testing::Test {
+ protected:
+    void genStrings(std::string& basicsStr, std::string& akasStr, std::string& ratingsStr, std::string& fail) {
 
-    basicsStr = "tconst\ttitleType\tprimaryTitle\toriginalTitle\tisAdult\tstartYear\tendYear\truntimeMinutes\tgenres\n"
-              "tt0000000\tshort\tLe clown et ses chiens\tLe clown et ses chiens\t0\t1892\t\\N\t5\tAnimation,Short\n"
-              "tt0000001\tmovie\tStar Wars\tFilm1 a\t0\t2005\t\\N\t10\t1\n"
-              "tt0000002\tmovie\tMarvel's film\tMarvel\t0\t2004\t\\N\t11\t1\n"
-              "tt0000003\tshort\tMarvel's film\tMarvel\t0\t2005\t\\N\t11\t1\n"
-              "tt0000004\tmovie\tMarvel's film\tMarvel\t1\t2005\t\\N\t11\t1\n"
-              "tt0000005\tmovie\tLord of The rings\tLoTr\t0\t2005\t\\N\t110\t1\n"
-              "tt0000006\tmovie\tHobbit\tHobbit\t0\t2005\t\\N\t110\t1\n";
+        basicsStr = "tconst\ttitleType\tprimaryTitle\toriginalTitle\tisAdult\tstartYear\tendYear\truntimeMinutes\tgenres\n"
+                    "tt0000000\tshort\tLe clown et ses chiens\tLe clown et ses chiens\t0\t1892\t\\N\t5\tAnimation,Short\n"
+                    "tt0000001\tmovie\tStar Wars\tFilm1 a\t0\t2005\t\\N\t10\t1\n"
+                    "tt0000002\tmovie\tMarvel's film\tMarvel\t0\t2004\t\\N\t11\t1\n"
+                    "tt0000003\tshort\tMarvel's film\tMarvel\t0\t2005\t\\N\t11\t1\n"
+                    "tt0000004\tmovie\tMarvel's film\tMarvel\t1\t2005\t\\N\t11\t1\n"
+                    "tt0000005\tmovie\tLord of The rings\tLoTr\t0\t2005\t\\N\t110\t1\n"
+                    "tt0000006\tmovie\tHobbit\tHobbit\t0\t2005\t\\N\t110\t1\n";
 
-    akasStr = "titleId\tordering\ttitle\tregion\tlanguage\ttypes\tattributes\tisOriginalTitle\n"
-            "tt0000000\t1\tКарменсіта\tUA\t\\N\timdbDisplay\t\\N\t0\n"
-            "tt0000005\t1\tВластелин Колец\tRU\t\\N\timdbDisplay\t\\n\t0";
+        akasStr = "titleId\tordering\ttitle\tregion\tlanguage\ttypes\tattributes\tisOriginalTitle\n"
+                  "tt0000000\t1\tКарменсіта\tUA\t\\N\timdbDisplay\t\\N\t0\n"
+                  "tt0000005\t1\tВластелин Колец\tRU\t\\N\timdbDisplay\t\\n\t0";
 
-    ratingsStr = "tconst\taverageRating\tnumVotes\n"
-               "tt0000001\t5.7\t1953\n"
-               "tt0000005\t8.9\t1400\n"
-               "tt0000006\t9.1\t500\n";
+        ratingsStr = "tconst\taverageRating\tnumVotes\n"
+                     "tt0000001\t5.7\t1953\n"
+                     "tt0000005\t8.9\t1400\n"
+                     "tt0000006\t9.1\t500\n";
 
-    fail = "titleId\tordering\ttitle\tregion\tlanguage\ttypes\tattributes\tisOriginalTitle\n"
-           "tt0000000 1 Карменсіта UA \\N imdbDisplay \\N 0\n"
-           "tt0000001 2 Carmencita DE \\N \\N literal title 0\n";
-}
+        fail = "titleId\tordering\ttitle\tregion\tlanguage\ttypes\tattributes\tisOriginalTitle\n"
+               "tt0000000 1 Карменсіта UA \\N imdbDisplay \\N 0\n"
+               "tt0000001 2 Carmencita DE \\N \\N literal title 0\n";
+    }
+
+    void SetUp() override {
+        std::string basicsStr;
+        std::string akasStr;
+        std::string ratingsStr;
+        std::string failStr;
+        genStrings(basicsStr, akasStr, ratingsStr, failStr);
+
+        basics = std::istringstream(basicsStr);
+        akas = std::istringstream(akasStr);
+        ratings = std::istringstream(ratingsStr);
+        fail = std::istringstream(failStr);
+    }
+
+    std::istringstream basics;
+    std::istringstream akas;
+    std::istringstream ratings;
+    std::istringstream fail;
+    Parser parser;
+};
 
 TEST(FilmSuite, TestFilmInit) {
   Film f("tt0000000", -1, "test_film");
@@ -46,25 +68,14 @@ TEST(FilmSuite, TestFilmOutput) {
     EXPECT_EQ(output, "test_film -1");
 }
 
-TEST(ParserSuite, TestSimple) {
-    std::string basicsStr;
-    std::string akasStr;
-    std::string ratingsStr;
-    std::string failStr;
-    genStrings(basicsStr, akasStr, ratingsStr, failStr);
-
-    std::istringstream basics(basicsStr);
-    std::istringstream akas(akasStr);
-    std::istringstream ratings(ratingsStr);
-
-    Parser parser("2005", akas, basics, ratings);
-    int res = parser.parse();
+TEST_F(ParserSuite, TestSimple) {
+    int res = parser.parse(basics, ratings, akas, "2005");
     auto films = parser.getResult();
     EXPECT_EQ(res, 0);
 
     std::vector<Film> expected = {
-            {"t1", 5.7, "Star Wars"},
-            {"t2", 8.9, "Властелин Колец"},
+            {"t1", 8.9, "Властелин Колец"},
+            {"t2", 5.7, "Star Wars"},
     };
     EXPECT_EQ(expected.size(), films.size());
     for (int i = 0; i < films.size(); i++) {
@@ -73,32 +84,18 @@ TEST(ParserSuite, TestSimple) {
     }
 }
 
-TEST(ParserSuite, TestWrongData) {
-    std::string basicsStr;
-    std::string akasStr;
-    std::string ratingsStr;
-    std::string failStr;
-    genStrings(basicsStr, akasStr, ratingsStr, failStr);
-
-    std::istringstream basics1(basicsStr);
-    std::istringstream ratings1(ratingsStr);
-    std::istringstream fail1(failStr);
-    Parser parser1("2005", fail1, basics1, ratings1);
-    int res = parser1.parse();
+TEST_F(ParserSuite, TestBasicsWrongData) {;
+    int res = parser.parse(fail, ratings, akas, "2005");
     EXPECT_EQ(res, 1);
+}
 
-    std::istringstream akas2(akasStr);
-    std::istringstream ratings2(ratingsStr);
-    std::istringstream fail2(failStr);
-    Parser parser2("2005", akas2, fail2, ratings2);
-    res = parser2.parse();
+TEST_F(ParserSuite, TestRatingsWrongData) {;
+    int res = parser.parse(basics, fail, akas, "2005");
     EXPECT_EQ(res, 1);
+}
 
-    std::istringstream basics3(basicsStr);
-    std::istringstream akas3(akasStr);
-    std::istringstream fail3(failStr);
-    Parser parser3("2005", akas3, basics3, fail3);
-    res = parser3.parse();
+TEST_F(ParserSuite, TestAkasWrongData) {;
+    int res = parser.parse(basics, ratings, fail, "2005");
     EXPECT_EQ(res, 1);
 }
 

@@ -1,125 +1,96 @@
 #include "Parser.h"
 
 #include <ranges>
-#include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <utility>
 
 #define SEARCH_TYPE "movie"
 #define SEARCH_REGION "RU"
 #define IS_ADULT "0"
 
-Parser::Parser(std::string year, std::istream& akasStream, std::istream& basicsStream,
-         std::istream& ratingsStream)
-        : year(std::move(year)),
-          akas(nullptr),
-          basics(nullptr),
-          ratings(nullptr) {
-    akas.rdbuf(akasStream.rdbuf());
-    basics.rdbuf(basicsStream.rdbuf());
-    ratings.rdbuf(ratingsStream.rdbuf());
-}
-
-int Parser::parse() {
-    if (getFilms()) {
+int Parser::parse(std::istream &basics, std::istream &ratings, std::istream &akas, std::string_view year) {
+    if (getFilmsInfo(basics, year)) {
+        return 1;
+    }
+    if (getFilmsRates(ratings)) {
+        return 1;
+    }
+    if (getRuNames(akas)) {
         return 1;
     }
     return 0;
 }
 
 std::vector<Film> Parser::getResult() {
-    return films;
+    std::vector<Film> res;
+    res.reserve(films.size());
+    for (auto& [_, film] : films) {
+        res.emplace_back(film);
+    }
+    return res;
 }
 
-int Parser::getFilmsInfo() {
+int Parser::getFilmsInfo(std::istream &basics, std::string_view year) {
     std::string line;
-    bool flag = false;
-
+    bool isData = false;
     while (std::getline(basics, line)) {
         std::istringstream ss(line);
-        Info tmp;
+        info_t tmp;
         ss >> tmp;
-
-        if ((tmp.isAdult.empty() || tmp.startYear.empty() || tmp.type.empty()) && flag) {
+        if ((tmp.isAdult.empty() || tmp.startYear.empty() || tmp.type.empty()) && isData) {
             return 1;
         }
         if (tmp.type == SEARCH_TYPE && tmp.startYear == year && tmp.isAdult == IS_ADULT) {
-            films.emplace_back(tmp.id, -1, tmp.title);
+            films.emplace(tmp.id, Film(tmp.id, -1, tmp.title));
         }
-
-        flag = true;
+        isData = true;
+    }
+    if (!isData) {
+        return 1;
     }
     return 0;
 }
 
-int Parser::getFilmsRates() {
+int Parser::getFilmsRates(std::istream &ratings) {
     std::string line;
-    int i = 0;
-    bool flag = false;
-
+    bool isData = false;
     while (std::getline(ratings, line)) {
-        Rate tmp;
+        rate_t tmp;
         std::istringstream ss(line);
         ss >> tmp;
 
-        if ((tmp.rate == INIT_RATE || tmp.numVotes == INIT_NUMVOTES) && flag) {
+        if ((tmp.rate == EMPTY || tmp.numVotes == EMPTY) && isData) {
             return 1;
         }
-        if (tmp.id == films[i].id) {
-            if (tmp.numVotes >= 1000)
-                films[i].rate = tmp.rate;
-            i++;
+        if (films.find(tmp.id) != films.end() && tmp.numVotes >= 1000) {
+            films.at(tmp.id).rate = tmp.rate;
         }
-
-        flag = true;
+        isData = true;
     }
-    std::erase_if(films, [](auto film) { return film.rate == INIT_RATE;});
+    std::erase_if(films, [](const auto& item) { return item.second.rate == EMPTY; });
     return 0;
 }
 
-int Parser::getRuNames() {
+int Parser::getRuNames(std::istream &akas) {
     std::string line;
-    int i = 0;
-    bool flag = false;
-
+    bool isData = false;
     while (std::getline(akas, line)) {
-        Translation tmp;
+        translation_t tmp;
         std::istringstream ss(line);
         ss >> tmp;
 
-        if ((tmp.region.empty() || tmp.id.empty() || tmp.newTitle.empty()) && flag) {
+        if ((tmp.region.empty() || tmp.id.empty() || tmp.newTitle.empty()) && isData) {
             return 1;
         }
-        if (tmp.id > films[i].id && i + 1 < (int)films.size() && flag) {
-            i++;
+        if (films.find(tmp.id) != films.end() && tmp.region == SEARCH_REGION) {
+            films.at(tmp.id).name = tmp.newTitle;
         }
-        if (tmp.id == films[i].id) {
-            if (tmp.region == SEARCH_REGION) {
-                films[i].name = tmp.newTitle;
-                i++;
-            }
-        }
-
-        flag = true;
+        isData = true;
     }
     return 0;
 }
 
-int Parser::getFilms() {
-    if (getFilmsInfo()) {
-        return 1;
-    }
-    if (getFilmsRates()) {
-        return 1;
-    }
-    if (getRuNames()) {
-        return 1;
-    }
-    return 0;
-}
-
-std::istream &operator>>(std::istream &in, Parser::Info &i) {
+std::istream &operator>>(std::istream &in, Parser::info_t &i) {
     std::getline(in, i.id, '\t');
     std::getline(in, i.type, '\t');
     std::getline(in, i.title, '\t');
@@ -129,13 +100,13 @@ std::istream &operator>>(std::istream &in, Parser::Info &i) {
     return in;
 }
 
-std::istream &operator>>(std::istream &in, Parser::Rate &r) {
+std::istream &operator>>(std::istream &in, Parser::rate_t &r) {
     std::getline(in, r.id, '\t');
     in >> r.rate >> r.numVotes;
     return in;
 }
 
-std::istream &operator>>(std::istream &in, Parser::Translation &t) {
+std::istream &operator>>(std::istream &in, Parser::translation_t &t) {
     std::getline(in, t.id, '\t');
     std::getline(in, t.ordering, '\t');
     std::getline(in, t.newTitle, '\t');

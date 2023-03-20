@@ -3,22 +3,21 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 #include "Film.h"
 
-#define INIT_RATE (-1)
-#define INIT_NUMVOTES (-1)
+#define EMPTY (-1)
 
 class Parser {
  public:
-    Parser(std::string year, std::istream& akasStream, std::istream& basicsStream,
-        std::istream& ratingsStream);
+    Parser() = default;
 
-    int parse();
+    int parse(std::istream &basics, std::istream &ratings, std::istream &akas, std::string_view year);
     std::vector<Film> getResult();
 
  private:
-    struct Info {
+    struct info_t {
         std::string id;
         std::string type;
         std::string title;
@@ -27,32 +26,27 @@ class Parser {
         std::string startYear;
     };
 
-    struct Rate {
+    struct rate_t {
         std::string id;
-        float rate = INIT_RATE;
-        int numVotes = INIT_NUMVOTES;
+        float rate = EMPTY;
+        int numVotes = EMPTY;
     };
 
-    struct Translation {
+    struct translation_t {
         std::string id;
         std::string newTitle;
         std::string region;
         std::string ordering;
     };
 
-    friend std::istream& operator>>(std::istream& in, Info& i);
-    friend std::istream& operator>>(std::istream& in, Rate& r);
-    friend std::istream& operator>>(std::istream& in, Translation& t);
+    friend std::istream& operator>>(std::istream& in, info_t& i);
+    friend std::istream& operator>>(std::istream& in, rate_t& r);
+    friend std::istream& operator>>(std::istream& in, translation_t& t);
 
-    std::string year;
-    std::istream akas;
-    std::istream basics;
-    std::istream ratings;
-    std::vector<Film> films;
-    int getFilmsInfo();
-    int getFilmsRates();
-    int getRuNames();
-    int getFilms();
+    std::unordered_map<std::string, Film> films;
+    int getFilmsInfo(std::istream &basics, std::string_view year);
+    int getFilmsRates(std::istream &ratings);
+    int getRuNames(std::istream &akas);
 };
 
 #endif  // PROJECT_INCLUDE_PARSER_H_
