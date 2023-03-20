@@ -1,6 +1,7 @@
 #include "Top.h"
-#include <algorithm>
+
 #include <ranges>
+#include <algorithm>
 
 Top::Top(const std::vector<Film> &_films)
     : films(_films) {

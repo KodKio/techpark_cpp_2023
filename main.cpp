@@ -14,7 +14,6 @@ void printUsage() {
 
 int run(const std::string& basics_filename, const std::string& ratings_filename,
         const std::string& akas_filename, const std::string& year) {
-
     std::ifstream basics(basics_filename);
     std::ifstream ratings(ratings_filename);
     std::ifstream akas(akas_filename);
