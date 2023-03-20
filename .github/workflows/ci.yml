@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: valgrind.log
-          path: ./build/valgrind.log
+          path: ./valgrind.log
   linters:
     runs-on: ubuntu-latest
     needs: [build_and_test]
