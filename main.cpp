@@ -28,7 +28,7 @@ int run(const std::string& basics_filename, const std::string& ratings_filename,
         return 1;
     }
 
-    auto res = Top(parser.getResult()).getTop();
+    auto res = Top(parser.getResult(), 10).getTop();
     for (const auto& i : res) {
         std::cout << i << "\n";
     }
