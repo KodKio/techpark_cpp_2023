@@ -3,20 +3,24 @@
 #include <ranges>
 #include <algorithm>
 
-Top::Top(const std::vector<Film> &_films)
-    : films(_films) {
-    std::ranges::sort(films, std::ranges::greater(), &Film::rate);
-    auto tmp = films | std::views::take(10);
-    films = std::vector<Film>(tmp.begin(), tmp.end());
+Top::Top(const std::vector<film_t> &_films, int _top_size)
+    : films(_films),
+      top_size(_top_size) {
+    generateTop();
 }
 
-std::vector<Film> Top::getTop() {
+Top::Top(std::vector<film_t> &&_films, int _top_size)
+        : films(std::move(_films)),
+          top_size(_top_size) {
+    generateTop();
+}
+
+std::vector<film_t> Top::getTop() {
     return films;
 }
 
-Top::Top(std::vector<Film> &&_films)
-    : films(std::move(_films)) {
-    std::ranges::sort(films, std::ranges::greater(), &Film::rate);
-    auto tmp = films | std::views::take(10);
-    films = std::vector<Film>(tmp.begin(), tmp.end());
+void Top::generateTop() {
+    std::ranges::sort(films, std::ranges::greater(), &film_t::rate);
+    auto tmp = films | std::views::take(top_size);
+    films = std::vector<film_t>(tmp.begin(), tmp.end());
 }

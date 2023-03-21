@@ -14,7 +14,7 @@ class Parser {
     Parser() = default;
 
     int parse(std::istream &basics, std::istream &ratings, std::istream &akas, std::string_view year);
-    std::vector<Film> getResult();
+    std::vector<film_t> getResult();
 
  private:
     struct info_t {
@@ -43,7 +43,7 @@ class Parser {
     friend std::istream& operator>>(std::istream& in, rate_t& r);
     friend std::istream& operator>>(std::istream& in, translation_t& t);
 
-    std::unordered_map<std::string, Film> films;
+    std::unordered_map<std::string, film_t> films;
     int getFilmsInfo(std::istream &basics, std::string_view year);
     int getFilmsRates(std::istream &ratings);
     int getRuNames(std::istream &akas);

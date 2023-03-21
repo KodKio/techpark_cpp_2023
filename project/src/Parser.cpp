@@ -21,8 +21,8 @@ int Parser::parse(std::istream &basics, std::istream &ratings, std::istream &aka
     return 0;
 }
 
-std::vector<Film> Parser::getResult() {
-    std::vector<Film> res;
+std::vector<film_t> Parser::getResult() {
+    std::vector<film_t> res;
     res.reserve(films.size());
     for (auto& [_, film] : films) {
         res.emplace_back(film);
@@ -32,61 +32,62 @@ std::vector<Film> Parser::getResult() {
 
 int Parser::getFilmsInfo(std::istream &basics, std::string_view year) {
     std::string line;
-    bool isData = false;
+    std::getline(basics, line);
+
     while (std::getline(basics, line)) {
         std::istringstream ss(line);
         info_t tmp;
         ss >> tmp;
-        if ((tmp.isAdult.empty() || tmp.startYear.empty() || tmp.type.empty()) && isData) {
+
+        if ((tmp.isAdult.empty() || tmp.startYear.empty() || tmp.type.empty())) {
             return 1;
         }
         if (tmp.type == SEARCH_TYPE && tmp.startYear == year && tmp.isAdult == IS_ADULT) {
-            films.emplace(tmp.id, Film(tmp.id, -1, tmp.title));
+            films.emplace(tmp.id, film_t(tmp.id, -1, tmp.title));
         }
-        isData = true;
     }
-    if (!isData) {
-        return 1;
-    }
+
     return 0;
 }
 
 int Parser::getFilmsRates(std::istream &ratings) {
     std::string line;
-    bool isData = false;
+    std::getline(ratings, line);
+
     while (std::getline(ratings, line)) {
         rate_t tmp;
         std::istringstream ss(line);
         ss >> tmp;
 
-        if ((tmp.rate == EMPTY || tmp.numVotes == EMPTY) && isData) {
+        if ((tmp.rate == EMPTY || tmp.numVotes == EMPTY)) {
             return 1;
         }
         if (films.find(tmp.id) != films.end() && tmp.numVotes >= 1000) {
             films.at(tmp.id).rate = tmp.rate;
         }
-        isData = true;
     }
+
     std::erase_if(films, [](const auto& item) { return item.second.rate == EMPTY; });
     return 0;
 }
 
 int Parser::getRuNames(std::istream &akas) {
     std::string line;
-    bool isData = false;
+    std::getline(akas, line);
+
     while (std::getline(akas, line)) {
         translation_t tmp;
         std::istringstream ss(line);
         ss >> tmp;
 
-        if ((tmp.region.empty() || tmp.id.empty() || tmp.newTitle.empty()) && isData) {
+        if ((tmp.region.empty() || tmp.id.empty() || tmp.newTitle.empty())) {
             return 1;
         }
         if (films.find(tmp.id) != films.end() && tmp.region == SEARCH_REGION) {
             films.at(tmp.id).name = tmp.newTitle;
         }
-        isData = true;
     }
+
     return 0;
 }
 

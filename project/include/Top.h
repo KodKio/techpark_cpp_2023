@@ -6,11 +6,13 @@
 
 class Top {
  public:
-    explicit Top(const std::vector<Film>& _films);
-    explicit Top(std::vector<Film>&& _films);
-    std::vector<Film> getTop();
+    explicit Top(const std::vector<film_t>& _films, int _top_size);
+    explicit Top(std::vector<film_t>&& _film, int _top_size);
+    std::vector<film_t> getTop();
  private:
-    std::vector<Film> films;
+    std::vector<film_t> films;
+    int top_size;
+    void generateTop();
 };
 
 #endif  // PROJECT_INCLUDE_TOP_H_

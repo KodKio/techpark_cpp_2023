@@ -4,14 +4,14 @@
 #include <string>
 #include <iostream>
 
-struct Film {
+struct film_t {
     std::string id;
     float rate;
     std::string name;
 
-    Film(std::string_view id, float rate, std::string_view name);
+    film_t(std::string_view id, float rate, std::string_view name);
 
-    friend std::ostream& operator<<(std::ostream& out, const Film& f);
+    friend std::ostream& operator<<(std::ostream& out, const film_t& f);
 };
 
 #endif  // PROJECT_INCLUDE_FILM_H_

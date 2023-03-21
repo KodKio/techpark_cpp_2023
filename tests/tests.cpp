@@ -53,8 +53,28 @@ class ParserSuite : public ::testing::Test {
     Parser parser;
 };
 
+class TopSuite : public ::testing::Test {
+ protected:
+    void SetUp() override {
+        films = {
+                {"t1", 5.7, "Star Wars"},
+                {"t2", 8.9, "Властелин Колец"},
+                {"t3", 9.1, "Hobbit"},
+        };
+
+        expected = {
+                {"t3", 9.1, "Hobbit"},
+                {"t2", 8.9, "Властелин Колец"},
+                {"t1", 5.7, "Star Wars"},
+        };
+    }
+
+    std::vector<film_t> films;
+    std::vector<film_t> expected;
+};
+
 TEST(FilmSuite, TestFilmInit) {
-  Film f("tt0000000", -1, "test_film");
+  film_t f("tt0000000", -1, "test_film");
   EXPECT_EQ(f.id, "tt0000000");
   EXPECT_EQ(f.rate, -1);
   EXPECT_EQ(f.name, "test_film");
@@ -62,7 +82,7 @@ TEST(FilmSuite, TestFilmInit) {
 
 TEST(FilmSuite, TestFilmOutput) {
     testing::internal::CaptureStdout();
-    Film f("tt0000000", -1, "test_film");
+    film_t f("tt0000000", -1, "test_film");
     std::cout << f;
     std::string output = testing::internal::GetCapturedStdout();
     EXPECT_EQ(output, "test_film -1");
@@ -70,13 +90,13 @@ TEST(FilmSuite, TestFilmOutput) {
 
 TEST_F(ParserSuite, TestSimple) {
     int res = parser.parse(basics, ratings, akas, "2005");
-    auto films = parser.getResult();
     EXPECT_EQ(res, 0);
 
-    std::vector<Film> expected = {
+    std::vector<film_t> expected = {
             {"t1", 8.9, "Властелин Колец"},
             {"t2", 5.7, "Star Wars"},
     };
+    auto films = parser.getResult();
     EXPECT_EQ(expected.size(), films.size());
     for (int i = 0; i < films.size(); i++) {
         EXPECT_EQ(films[i].name, expected[i].name);
@@ -99,17 +119,8 @@ TEST_F(ParserSuite, TestAkasWrongData) {;
     EXPECT_EQ(res, 1);
 }
 
-TEST(TopSuite, TestWithRvalue) {
-    Top top({
-        {"t1", 5.7, "Star Wars"},
-        {"t2", 8.9, "Властелин Колец"},
-        {"t3", 9.1, "Hobbit"},
-    });
-    std::vector<Film> expected = {
-        {"t3", 9.1, "Hobbit"},
-        {"t2", 8.9, "Властелин Колец"},
-        {"t1", 5.7, "Star Wars"},
-    };
+TEST_F(TopSuite, TestWithRvalue) {
+    Top top(std::move(films), 10);
     auto films = top.getTop();
     EXPECT_EQ(expected.size(), films.size());
     for (int i = 0; i < films.size(); i++) {
@@ -118,18 +129,8 @@ TEST(TopSuite, TestWithRvalue) {
     }
 }
 
-TEST(TopSuite, TestWithLvalue) {
-    std::vector<Film> films = {
-            {"t1", 5.7, "Star Wars"},
-            {"t2", 8.9, "Властелин Колец"},
-            {"t3", 9.1, "Hobbit"},
-    };
-    Top top(films);
-    std::vector<Film> expected = {
-            {"t3", 9.1, "Hobbit"},
-            {"t2", 8.9, "Властелин Колец"},
-            {"t1", 5.7, "Star Wars"},
-    };
+TEST_F(TopSuite, TestWithLvalue) {
+    Top top(films, 10);
     auto result = top.getTop();
     EXPECT_EQ(expected.size(), result.size());
     for (int i = 0; i < result.size(); i++) {
