@@ -11,8 +11,6 @@
 
 class Parser {
  public:
-    Parser() = default;
-
     int parse(std::istream &basics, std::istream &ratings, std::istream &akas, std::string_view year);
     std::vector<film_t> getResult();
 

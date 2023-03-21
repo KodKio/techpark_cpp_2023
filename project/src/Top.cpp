@@ -10,7 +10,7 @@ Top::Top(const std::vector<film_t> &_films, int _top_size)
 }
 
 Top::Top(std::vector<film_t> &&_films, int _top_size)
-        : films(std::move(_films)),
+        : films(_films),
           top_size(_top_size) {
     generateTop();
 }
