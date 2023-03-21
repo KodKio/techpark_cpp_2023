@@ -7,10 +7,6 @@
 class Top {
  public:
     Top() = delete;
-    ~Top() = default;
-    Top(const Top& other) = delete;
-    Top(Top&& other) = delete;
-
     Top(const std::vector<film_t>& _films, int _top_size);
     Top(std::vector<film_t>&& _film, int _top_size);
 
