@@ -5,6 +5,8 @@
 #include "Top.h"
 #include "Parser.h"
 
+#define TOP_SIZE 10
+
 void printUsage() {
     std::cerr << "Something went wrong!" << std::endl;
     std::cout << "Usage: ./films_top --year (YYYY) --title-akas-path path/to/title.akas.tsv "
@@ -28,7 +30,7 @@ int run(const std::string& basics_filename, const std::string& ratings_filename,
         return 1;
     }
 
-    auto res = Top(parser.getResult(), 10).getTop();
+    auto res = Top(parser.getResult(), TOP_SIZE).getTop();
     for (const auto& i : res) {
         std::cout << i << "\n";
     }
