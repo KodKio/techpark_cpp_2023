@@ -17,12 +17,10 @@ CatOperation::CatOperation(std::istream& in)
 void CatOperation::HandleEndOfInput() {
     std::string line;
     std::istringstream input(data);
-    while (std::getline(input, line)) {
-        if (nextOperation)
-            nextOperation->ProcessLine(line);
-        else
-            std::cout << line << std::endl;
-    }
+
+    while (std::getline(input, line))
+        ProcessLine(line);
+
     if (nextOperation)
         nextOperation->HandleEndOfInput();
 }

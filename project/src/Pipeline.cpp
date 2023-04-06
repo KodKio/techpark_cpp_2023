@@ -1,41 +1,36 @@
-//
-// Created by Николай Степанов on 23.03.2023.
-//
-
 #include "Pipeline.h"
 #include "CatOperation.h"
 #include "EchoOperation.h"
 #include "WcOperation.h"
 
-#include <utility>
 #include <sstream>
 #include <iostream>
 
-Pipeline::Pipeline(std::string input)
-    : input(std::move(input)) {
-    Parse();
-}
+#define CAT_OPERATION_NAME "cat"
+#define ECHO_OPERATION_NAME "echo"
+#define WC_OPERATION_NAME "wc"
+#define WC_PARAM_NAME "-l"
 
-void Pipeline::Parse() {
+void Pipeline::Construct(const std::string& input) {
     std::istringstream in(input);
     std::string command;
+
     while (std::getline(in, command, '|')) {
         if (command[0] == ' ') {
             command = command.substr(1);
         }
+
         std::string name, arg;
         std::istringstream commandIn(command);
         commandIn >> name >> arg;
-        if (name == "cat") {
+
+        if (name == CAT_OPERATION_NAME) {
             std::ifstream file(arg);
-            auto catOperation = std::make_shared<CatOperation>(file);
-            InsertOperation(catOperation);
-        } else if (name == "echo") {
-            auto echoOperation = std::make_shared<EchoOperation>(arg);
-            InsertOperation(echoOperation);
-        } else if (name == "wc" && arg == "-l") {
-            auto wcOperation = std::make_shared<WcOperation>();
-            InsertOperation(wcOperation);
+            InsertOperation(std::make_shared<CatOperation>(file));
+        } else if (name == ECHO_OPERATION_NAME) {
+            InsertOperation(std::make_shared<EchoOperation>(arg));
+        } else if (name == WC_OPERATION_NAME && arg == WC_PARAM_NAME) {
+            InsertOperation(std::make_shared<WcOperation>());
         } else {
            throw UnknownCommandException(name + " " + arg);
         }

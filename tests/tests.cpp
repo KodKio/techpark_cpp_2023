@@ -98,8 +98,9 @@ TEST(WcSuite, SimpleTest) {
     EXPECT_EQ(expected, output);
 }
 
-TEST(PipelineSuite, SimpleTest) {
-    Pipeline pl("echo 1 | cat file.txt | echo 2 | wc -l | wc -l");
+TEST(PipelineSuite, SimpleExecuteTest) {
+    Pipeline pl;
+    pl.Construct("echo 1 | cat file.txt | echo 2 | wc -l | wc -l");
     std::string expected = "1\n";
 
     testing::internal::CaptureStdout();
@@ -109,20 +110,16 @@ TEST(PipelineSuite, SimpleTest) {
     EXPECT_EQ(expected, output);
 }
 
-TEST(PipelineSuite, ExpectThrowTest) {
-    EXPECT_THROW(Pipeline pl("echo 1 | cats file.txt | echo 2 | wc -l"), UnknownCommandException);
+TEST(PipelineSuite, ExpectThrowFromExecuteTest) {
+    Pipeline pl;
+    EXPECT_THROW(pl.Construct("echo 1 | cats file.txt | echo 2 | wc -l"), UnknownCommandException);
 }
 
-TEST(PipelineSuite, ThrowMessageTest) {
+TEST(PipelineSuite, ThrowMessageFromExecuteTest) {
     try {
-        Pipeline pl("echo 1 | cats file.txt | echo 2 | wc -l");
+        Pipeline pl;
+        pl.Construct("echo 1 | cats file.txt | echo 2 | wc -l");
     } catch (std::exception& exc) {
         EXPECT_EQ(std::string(exc.what()), "Unknown command: cats file.txt");
     };
-}
-
-int main(int argc, char** argv) {
-  setlocale(0, ".UTF8");
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
 }

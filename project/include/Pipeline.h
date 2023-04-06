@@ -9,17 +9,14 @@
 
 class Pipeline {
  public:
-    Pipeline() = delete;
-    explicit Pipeline(std::string input);
     void Execute();
+    void Construct(const std::string& input);
 
  private:
-    std::string input;
     std::shared_ptr<IOperation> firstOperation;
     std::weak_ptr<IOperation> lastOperation;
 
     void InsertOperation(const std::shared_ptr<IOperation>& operation);
-    void Parse();
 };
 
 

@@ -8,7 +8,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     try {
-        Pipeline pipeline((std::string(argv[1])));
+        Pipeline pipeline;
+        pipeline.Construct(std::string(argv[1]));
         pipeline.Execute();
     } catch (std::exception& exc) {
         std::cout << exc.what();
