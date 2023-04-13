@@ -42,7 +42,6 @@ TEST_F(EchoSuite, PassOnAndIgnoreTest) {
 class CatSuite : public ::testing::Test {
 protected:
     void SetUp() override {
-
         std::string s1 = "file1\ncontent1\n";
         std::string s2 = "file2\ncontent2\n";
         std::istringstream ss1(s1);
@@ -81,7 +80,6 @@ TEST_F(CatSuite, PassOnTest) {
 
 
 TEST(WcSuite, SimpleTest) {
-
     std::string s1 = "file1\ncontent1\n";
     std::istringstream ss1(s1);
 
